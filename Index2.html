@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Un Weekend Magico Solo Per Noi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(160deg, #dff0fa 0%, #b8d8f0 30%, #7fb8e8 60%, #4a8fc4 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Lato', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .stars {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .star {
+      position: absolute;
+      background: rgba(255,255,255,0.95);
+      border-radius: 50%;
+      animation: twinkle var(--d, 3s) infinite ease-in-out;
+      opacity: 0;
+      box-shadow: 0 0 6px 2px rgba(255,255,255,0.6);
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0; }
+      50% { opacity: var(--o, 0.8); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 820px;
+      width: 92%;
+      margin: 40px auto;
+      text-align: center;
+    }
+
+    .intro {
+      color: #1a5276;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 3vw, 1.2rem);
+      font-style: italic;
+      letter-spacing: 0.12em;
+      opacity: 0;
+      animation: fadeUp 1.2s ease forwards 0.3s;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      color: #0d3b5e;
+      line-height: 1.2;
+      opacity: 0;
+      animation: fadeUp 1.2s ease forwards 0.6s;
+      margin-bottom: 36px;
+    }
+
+    h1 em { color: #1a6fa8; font-style: italic; }
+
+    .invite-wrap {
+      position: relative;
+      opacity: 0;
+      animation: fadeUp 1.4s ease forwards 1s;
+      margin-bottom: 40px;
+    }
+
+    .invite-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -12px;
+      border: 1px solid rgba(26, 111, 168, 0.35);
+      border-radius: 6px;
+      pointer-events: none;
+    }
+
+    .invite-wrap img {
+      width: 100%;
+      border-radius: 6px;
+      display: block;
+      box-shadow: 0 20px 60px rgba(10, 60, 110, 0.25);
+    }
+
+    /* Player */
+    .music-section {
+      opacity: 0;
+      animation: fadeUp 1.2s ease forwards 1.4s;
+      margin-bottom: 40px;
+    }
+
+    .music-label {
+      color: #1a5276;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+
+    .music-player {
+      background: rgba(255, 255, 255, 0.45);
+      border: 1px solid rgba(26, 111, 168, 0.3);
+      border-radius: 50px;
+      padding: 14px 28px;
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(8px);
+    }
+
+    .music-player:hover {
+      background: rgba(255, 255, 255, 0.65);
+      border-color: rgba(26, 111, 168, 0.55);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(26, 111, 168, 0.15);
+    }
+
+    .play-btn {
+      width: 40px; height: 40px;
+      background: #1a6fa8;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .play-btn:hover { background: #0d5a8c; }
+
+    .play-icon {
+      width: 0; height: 0;
+      border-style: solid;
+      border-width: 7px 0 7px 13px;
+      border-color: transparent transparent transparent #fff;
+      margin-left: 3px;
+    }
+
+    .pause-icon {
+      display: none;
+      gap: 4px;
+      align-items: center;
+    }
+    .pause-bar {
+      width: 4px; height: 14px;
+      background: #fff;
+      border-radius: 2px;
+    }
+
+    .music-info { text-align: left; }
+
+    .song-title {
+      color: #0d3b5e;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+    }
+
+    .song-artist {
+      color: #4a8fc4;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 20px;
+    }
+
+    .bar {
+      width: 3px;
+      background: #1a6fa8;
+      border-radius: 2px;
+      height: 4px;
+    }
+
+    .playing .bar:nth-child(1) { animation: bar 0.8s ease infinite; }
+    .playing .bar:nth-child(2) { animation: bar 0.8s ease infinite 0.15s; }
+    .playing .bar:nth-child(3) { animation: bar 0.8s ease infinite 0.3s; }
+    .playing .bar:nth-child(4) { animation: bar 0.8s ease infinite 0.45s; }
+
+    @keyframes bar {
+      0%, 100% { height: 4px; }
+      50% { height: 18px; }
+    }
+
+    .footer {
+      opacity: 0;
+      animation: fadeUp 1.2s ease forwards 1.8s;
+      color: rgba(13, 59, 94, 0.5);
+      font-size: 0.78rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding-bottom: 40px;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Overlay tap per avviare audio */
+    #tap-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(13, 59, 94, 0.55);
+      backdrop-filter: blur(4px);
+      cursor: pointer;
+      transition: opacity 0.6s ease;
+    }
+
+    #tap-overlay .tap-msg {
+      color: #fff;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      font-style: italic;
+      text-align: center;
+      padding: 0 24px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    #tap-overlay .tap-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.85; }
+      50% { transform: scale(1.06); opacity: 1; }
+    }
+
+    #tap-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Overlay: tocca per avviare -->
+  <div id="tap-overlay" onclick="startExperience()">
+    <div class="tap-icon">🎵</div>
+    <div class="tap-msg">Tocca per aprire il tuo invito speciale</div>
+  </div>
+
+  <div class="stars" id="stars"></div>
+
+  <div class="container">
+    <p class="intro">Hai superato il quiz... e ora</p>
+    <h1>Un Weekend Magico<br><em>Solo Per Noi</em></h1>
+
+    <div class="invite-wrap">
+      <img src="https://drive.google.com/thumbnail?id=1EG4II1IEJJcrkaf5n-j6lMcG5oe6J9HB&sz=w1600" alt="Il tuo invito speciale">
+    </div>
+
+    <div class="music-section">
+      <p class="music-label">♪ La nostra colonna sonora</p>
+      <div class="music-player" onclick="toggleMusic()">
+        <div class="play-btn">
+          <div class="play-icon" id="playIcon"></div>
+          <div class="pause-icon" id="pauseIcon">
+            <div class="pause-bar"></div>
+            <div class="pause-bar"></div>
+          </div>
+        </div>
+        <div class="music-info">
+          <div class="song-title">Un Mondo a Parte</div>
+          <div class="song-artist">Jovanotti</div>
+        </div>
+        <div class="bars" id="bars">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">18 · 07 · 2026 &nbsp;—&nbsp; 20 · 07 · 2026</div>
+  </div>
+
+  <div id="yt-player" style="position:fixed;bottom:-9999px;left:-9999px;width:1px;height:1px;"></div>
+
+  <script>
+    // Stelle
+    const starsEl = document.getElementById('stars');
+    for (let i = 0; i < 120; i++) {
+      const s = document.createElement('div');
+      s.className = 'star';
+      const size = Math.random() > 0.7 ? 10 : 6;
+      s.style.cssText = `
+        left:${Math.random()*100}%;
+        top:${Math.random()*100}%;
+        width:${size}px; height:${size}px;
+        --d:${2+Math.random()*4}s;
+        --o:${0.6+Math.random()*0.4};
+        animation-delay:${Math.random()*4}s;
+      `;
+      starsEl.appendChild(s);
+    }
+
+    var player;
+    var isPlaying = false;
+    var playerReady = false;
+
+    window.onYouTubeIframeAPIReady = function() {
+      player = new YT.Player('yt-player', {
+        height: '1', width: '1',
+        videoId: 'Tq4cHZYvQj8',
+        playerVars: { autoplay: 0, controls: 0, rel: 0 },
+        events: {
+          onReady: function() { playerReady = true; },
+          onStateChange: function(e) {
+            if (e.data === YT.PlayerState.ENDED) setPlayState(false);
+          }
+        }
+      });
+    };
+
+    function startExperience() {
+      // Nascondi overlay
+      document.getElementById('tap-overlay').classList.add('hidden');
+      // Avvia musica dopo breve delay
+      setTimeout(function() {
+        if (playerReady) {
+          player.playVideo();
+          setPlayState(true);
+        } else {
+          // Se il player non è ancora pronto, riprova
+          var retry = setInterval(function() {
+            if (playerReady) {
+              player.playVideo();
+              setPlayState(true);
+              clearInterval(retry);
+            }
+          }, 300);
+        }
+      }, 500);
+    }
+
+    function toggleMusic() {
+      if (!playerReady) return;
+      if (isPlaying) {
+        player.pauseVideo();
+        setPlayState(false);
+      } else {
+        player.playVideo();
+        setPlayState(true);
+      }
+    }
+
+    function setPlayState(playing) {
+      isPlaying = playing;
+      document.getElementById('playIcon').style.display = playing ? 'none' : 'block';
+      const pi = document.getElementById('pauseIcon');
+      pi.style.display = playing ? 'flex' : 'none';
+      const bars = document.getElementById('bars');
+      playing ? bars.classList.add('playing') : bars.classList.remove('playing');
+    }
+  </script>
+  <script src="https://www.youtube.com/iframe_api"></script>
+
+</body>
+</html>
